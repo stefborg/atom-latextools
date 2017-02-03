@@ -144,6 +144,7 @@ module.exports.parse_tex_log = (data) ->
   line_rx = /^l\.(\d+)\s(.*)/    # l.nn <text>
   warning_rx = /^(.*?) Warning: (.+)/ # Warnings, first line
   line_rx_latex_warn = /input line (\d+)\.$/# Warnings, line number
+  line_rx_badbox = /at lines* (\d+)/
   matched_parens_rx = /\([^()]*\)/# matched parentheses, to be deleted (note: not if nested)
   assignment_rx = /\\[^=]*=/  # assignment, heuristics for line merging
   # Special case: the xy package, which reports end of processing with "loaded)" or "not reloaded)"
@@ -170,6 +171,21 @@ module.exports.parse_tex_log = (data) ->
       warnings.push([location, warn_line, l])
     else
       warnings.push([location, -1, l])
+
+  handle_badbox = (l) ->
+
+    if files.length is 0
+      location = "[no file]"
+    else
+      location = files[files.length-1]
+
+    match = line_rx_badbox.exec(l)
+    if match
+      linenr = match[1]
+    else
+      linenr = -1
+
+    warnings.push([location, linenr, l])
 
 
   # State definitions
@@ -422,7 +438,9 @@ module.exports.parse_tex_log = (data) ->
     # skip everything for now
     # Over/underfull messages end with [] so look for that
     if line.slice(0,8) == "Overfull" || line.slice(0,9) == "Underfull"
+      current_badbox = line
       if line.slice(-2)=="[]" # one-line over/underfull message
+        handle_badbox(current_badbox)
         continue
       ou_processing = true
       while ou_processing
@@ -442,6 +460,7 @@ module.exports.parse_tex_log = (data) ->
         warnings.push(["", -1, "Please let me know via GitHub"])
         break
       else
+        handle_badbox(current_badbox)
         continue
 
     # Special case: the bibgerm package, which has comments starting and ending with
