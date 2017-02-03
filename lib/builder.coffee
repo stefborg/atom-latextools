@@ -229,5 +229,5 @@ class Builder extends LTool
           )
 
         # Jump to PDF
-        @ltConsole.addContent("Jumping to PDF...")
-        @viewer.jumpToPdf(te)
+        # @ltConsole.addContent("Jumping to PDF...")
+        # @viewer.jumpToPdf(te)
