@@ -280,7 +280,7 @@ module.exports = Latextools =
       @snippetManager.quotes('`', '\'', '\'')
     @subscriptions.add atom.commands.add 'atom-text-editor', 'latextools:double-quote': =>
       @requireIfNeeded ['snippet-manager']
-      @snippetManager.quotes('``', '\'\'', '"')
+      @snippetManager.quotes('\\\\enquote\{', '\}', '"')
 
   deactivate: ->
     @subscriptions.dispose()
