@@ -27,7 +27,7 @@ class Builder extends LTool
 
     user_program = 'pdf' if user_program is 'pdflatex'
 
-    options =  ["-cd", "-e", "-f", "-gg", "-#{user_program}",
+    options =  ["-cd", "-e", "-f", "-g", "-#{user_program}",
       "-interaction=nonstopmode", "-synctex=1"]
 
     for texopt in user_options
