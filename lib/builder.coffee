@@ -110,7 +110,7 @@ class Builder extends LTool
       user_program = atom.config.get("latextools.builderSettings.program")
 
     # prepare the build console
-    @ltConsole.show()
+#    @ltConsole.show()
     @ltConsole.clear()
 
     # Now prepare path
@@ -221,12 +221,22 @@ class Builder extends LTool
 
         unless errors.length > 0
           atom.notifications.addSuccess(
-            "Build completed with 0 errors and #{warnings.length} warnings"
+            "Build completed with 0 errors and #{warnings.length} warnings",
+            {
+              buttons: [
+                {
+                  className: "btn-open-console",
+                  onDidClick: => @ltConsole.show(),
+                  text: "Open console"
+                }
+              ]
+            }
           )
         else
           atom.notifications.addError(
             "Build completed with #{errors.length} errors and #{warnings.length} warnings"
           )
+          @ltConsole.show()
 
         # Jump to PDF
         # @ltConsole.addContent("Jumping to PDF...")
